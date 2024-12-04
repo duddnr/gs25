@@ -1,0 +1,210 @@
+<style>
+		.container{
+			height: 85vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		.loginBox-body{
+			border: 3px solid;
+			padding: 20px;
+		}
+		
+		.userLogin {
+			display: grid;
+			grid-template-columns: 15px 250px;
+			grid-gap: 10px;
+		}
+		
+		.userJoin {
+			display: grid;
+			grid-template-columns: 20px 300px;
+			grid-gap: 10px;
+		}
+		
+		.userJoinEmail {
+			display: grid;
+			grid-template-columns: 20px 300px 60px;
+			grid-gap: 10px;
+		}
+		
+		.emailCode {
+			position:relative; 
+			left:30px;
+			display: none;
+			grid-template-columns: 180px 60px 70px;
+			grid-gap: 10px;
+		}
+	</style>
+	
+	<div class="container">
+		<div th:if="${user == null}">
+			<div class="loginBox-body">
+			
+				<div class="userLogin mb-3">
+					<i class="fa-solid fa-user fa-xl" style="position:relative; top:20px;"></i>
+					<input type="text" id="userId" class="form-control" placeholder="아이디">
+			
+					<i class="fa-solid fa-lock fa-xl" style="position:relative; top:20px;"></i>
+					<input type="password" id="password" class="form-control" placeholder="비밀번호">
+				</div>
+			
+				<p th:if="${errorMsg} != null" th:text="${errorMsg}" style="color: red;"></p>
+				
+				<div style="position:relative; display: flex; gap: 10px; font-size: 14px; top:-10px;">
+					<span id="findId" style="text-decoration: underline; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#findIdModal">아이디 찾기</span>
+					<span id="findPassword" style="text-decoration: underline; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#findPasswordModal">비밀번호 찾기</span>
+				</div>
+				
+				<div class="row">
+					<div class="col" style="text-align : center;">
+						<button class="btn btn-primary" id="userLoginBtn" style="width: 120px;">로그인</button>
+					</div>
+			
+					<div class="col" style="text-align : center;">
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userJoin"
+							style="width: 120px;">회원가입</button>
+					</div>
+				</div>
+			
+			</div>
+		</div>
+		
+		<div th:unless="${user == null}">
+			안녕하세요
+		</div>
+	</div>
+
+<div class="modal fade" id="userJoin" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" style="max-width: 430px;">
+			<div class="modal-content">
+		
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">회원가입</h5>
+				</div>
+		
+				<div class="modal-body">
+					
+					<div class="userJoin mb-1">
+						<i class="fa-solid fa-id-card fa-lg" style="position:relative; top:20px;"></i>
+						<input type="text" id="userJoinName" class="form-control" placeholder="이름">
+					</div>
+					<span id="userJoinNameCheck" style="position:relative; left:35px; display: none; font-size: 14px; color: red;">이름은 필수 정보 입니다</span>
+					
+					<div class="userJoin mb-1">
+						<i class="fa-solid fa-user fa-xl" style="position:relative; top:20px;"></i>
+						<input type="text" id="userJoinId" class="form-control" placeholder="아이디">
+					</div>
+					<span id="userJoinIdCheck" style="position:relative; left:35px; display: none; font-size: 14px;  color: red;">아이디는 필수 정보 입니다</span>
+					
+					<div class="userJoin mb-1">	
+						<i class="fa-solid fa-lock fa-xl" style="position:relative; top:20px;"></i>
+						<input type="password" id="userJoinPassword" class="form-control" placeholder="비밀번호">
+					</div>
+					<span id="userJoinPasswordMsg" style="position:relative; left:35px; display: none; font-size: 14px; color: red;"></span>
+					
+					<div class="userJoin mb-1">	
+						<i class="fa-solid fa-lock fa-xl" style="position:relative; top:20px;"></i>
+						<input type="password" id="userJoinPasswordCheck" class="form-control" placeholder="비밀번호 확인" disabled>
+					</div>
+					<span id="userJoinPasswordCheckMsg" style="position:relative; left:35px; display: none; font-size: 14px; color: red;"></span>
+					
+					<div class="userJoinEmail mb-1">
+						<i class="fa-solid fa-envelope fa-xl" style="position:relative; top:20px;"></i>
+						<input type="text" id="userJoinEmail" class="form-control" placeholder="이메일">
+						<button type="button" class="btn btn-primary" id="emailCertificationBtn" disabled>인증</button>
+					</div>
+					<span id="userJoinEmailCheck" style="position:relative; left:35px; display: none; font-size: 14px; color: red;">이메일은 필수 정보 입니다</span>
+					
+					<div class="emailCode mb-1">
+						<input type="text" id="emailCode" class="form-control mb-1" placeholder="코드를 입력 하세요.">
+						<button type="button" class="btn btn-primary" id="emailCodeBtn">확인</button>
+						<span id="timer" style="position:relative; top:10px; font-size: 14px; color: red;"></span>
+					</div>
+					<span id="emailCodeCheck" style="position:relative; left:35px; display: none; font-size: 14px;"></span>
+					
+					<div class="userJoin mb-1">	
+						<i class="fa-solid fa-phone fa-xl" style="position:relative; top:20px;"></i>
+						<input type="text" id="userJoinPhoneNumber" class="form-control" placeholder="핸드폰 번호('-'빼고 입력)">
+					</div>
+					<span id="userJoinPhoneNumberCheck" style="position:relative; left:35px; display: none; font-size: 14px; color: red;">핸드폰 번호는 필수 정보 입니다</span>
+				</div>
+		
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+		        <button type="button" class="btn btn-primary" id="userJoinBtn">회원가입</button>
+		      </div>
+		      
+			</div>
+		</div>
+</div>
+	
+<div class="modal fade" id="findIdModal"data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" style="max-width: 430px;">
+		<div class="modal-content">
+		
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">아이디 찾기</h5>
+				</div>
+		
+				<div class="modal-body">
+					<input id="findNameinput" class="form-control" style="width: 200px; margin-right: 10px; margin-bottom: 10px;" placeholder="이름"></input>
+					<div style="display: flex;">
+						<input id="findIdEmailinput" class="form-control" style="width: 250px; margin-right: 10px;" placeholder="이메일"></input>
+						<button type="button" id="findIdBtn" class="btn btn-primary">아이디 검색</button>
+					</div>
+					<span id="findEmailCheck" style="position:relative; display: none; font-size: 14px;  color: red;"></span>
+					<div id="findIdText" style="margin-top: 10px;"></div>
+				</div>
+				
+			<div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+		    </div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="findPasswordModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" style="max-width: 430px;">
+		<div class="modal-content">
+		
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">비밀번호 찾기</h5>
+				</div>
+		
+				<div class="modal-body">
+					<div class="FPW_information">
+						<input id="FPW_id_input" class="form-control" style="width: 200px; margin-right: 10px; margin-bottom: 10px;" placeholder="아이디"></input>
+						<div style="display: flex;">
+							<input id="FPW_email_input" class="form-control" style="width: 250px; margin-right: 10px;" placeholder="이메일"></input>
+							<button type="button" id="FPW_email_CertificationBtn" class="btn btn-primary" disabled>인증</button>
+						</div>
+						<div id="FPW_emailCheck" style="position:relative; display: none; font-size: 14px;  color: red;"></div>
+						
+						<div class="findemailCode" style="display: none; margin-top: 10px;">
+							<input type="text" id="FPW_emailCode_input" class="form-control mb-1" style="width: 180px; margin-right: 10px;" placeholder="코드를 입력 하세요.">
+							<button type="button" class="btn btn-primary" id="FPW_emailCodeBtn">확인</button>
+							<span id="FPW_timer" style="position:relative; top:10px; font-size: 14px; color: red;"></span>
+						</div>
+						<div id="FPW_emailCodeCheck" style="position:relative; display: none; font-size: 14px;"></div>
+						
+						<button type="button" class="btn btn-primary" id="newPassword" style="margin-top: 20px;">비밀번호 변경</button>
+					</div>
+					
+					<div class="FPW_newPassword" style="display: none;">
+						dd
+					</div>
+				</div>
+				
+			<div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+		    </div>
+		</div>
+	</div>
+</div>
+	
+<th:block>
+	<script src="/js/user/user.js"></script>
+	<script src="/js/user/userJoinValidation.js"></script>
+</th:block>

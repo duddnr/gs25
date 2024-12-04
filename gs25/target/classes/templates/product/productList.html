@@ -1,0 +1,229 @@
+<style>		
+			.productList-body {
+				overflow:auto;
+				position: relative;
+				height: 660px;
+				width: 900px;
+				top: 30px;
+				left: 300px;
+				border: 3px solid;
+				float:left;
+				padding: 5px;
+				margin-right:10px;
+			}
+			
+			.wrapper {
+			  display: grid;
+			  grid-template-columns: 210px 210px 210px 210px;
+			  margin-bottom:50px;
+			}
+			
+			.item {
+				overflow:hidden;
+				transform:scale(0.8,0.8);
+				margin-bottom: -50px;
+			}
+			
+			.basket-body {
+				position: relative;
+				height:  660px;
+				width: 450px;
+				top: 30px;
+				left: 300px;
+				border: 3px solid;
+				float:left;
+			}
+			
+			.order-body {
+				overflow:auto;
+				height:  300px;
+				padding: 5px;
+			}
+			
+			.orderItem {
+				display: grid;
+				grid-template-columns: 120px 180px 40px;
+			}
+			
+			.orderItemList {
+				display: grid;
+				grid-template-columns: 160px 110px 100px 100px;
+			}
+			
+			.orderItemCount {
+				display: grid;
+				grid-template-columns: 25px 50px 25px;
+			}
+			
+			th, td {
+			    border: 1px solid #444444;
+			}
+</style>
+			<div style="position: relative; display: flex; width: 170px; height: 40px;  top: 20px; left: 300px;">
+				<input id="search" type="text" style="padding-right: 40px;"></input>
+				<button type="button" id="searchBtn" style="position: absolute; right: -50px; border-radius: 10px; top:5px;">
+					<i class="fa-solid fa-magnifying-glass fa-lg"></i>
+				</button>
+			</div>
+			
+			<div class="productList-body">				
+				<div class="wrapper">					
+					
+						<div th:each="productDto: ${productDtoList}">
+							<div class="item">
+								<div class="card">
+									<img th:src="'/images/' + ${#strings.toString(productDto.productType)} + '/' + ${productDto.fileName}" alt="ddd" />
+									<div class="card-body">
+										<h5 class="card-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">[[${productDto.originFileName}]]</h5>
+									    <p class="card-text">\ [[${productDto.productPrice}]]</p>
+									    <button type="button" name="add" class="btn btn-primary" th:value="${productDto.id}">담기</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						  
+				</div>
+			</div>
+		
+			<div class="basket-body">
+				<div style="font-size:2em; text-align : center; margin-top: 5px;">주문 목록</div>
+				<hr style="border: 3px solid #000000;">
+				
+				<div class="order-body">
+					<div class="orderItem" style="text-align : center; margin-bottom: 10px;">
+							<span>상품</span>
+							<span>수량</span>
+							<span>가격</span>
+    				</div>
+    				
+					<div class="orderDtoList">
+						<div th:each="cartProductDto: ${cartProductDtoList}">
+							<div name="productId" th:value="${cartProductDto.productId}" style="display: none;"></div>
+							
+							  <div class="orderItemList" style="margin-bottom: 10px;">
+									<span name="productName" th:value="${cartProductDto.productName}">[[${cartProductDto.productName}]]</span>
+									
+									<div class="orderItemCount">
+											<input th:if="${cartProductDto.count <= 1}" name="minus" type="button" value='-' disabled/>
+											<input th:unless="${cartProductDto.count <= 1}" name="minus" type="button" value='-' />
+											
+											<span name="productCount" th:value="${cartProductDto.count}" style="text-align : center;">[[${cartProductDto.count}]]</span>
+											
+											<input th:if="${cartProductDto.count >= 100}" name="plus" type="button" value='+' disabled/>
+											<input th:unless="${cartProductDto.count >= 100}" name="plus" type="button" value='+'/>
+									</div>
+									
+									<span name="orderPrice" th:value="${cartProductDto.productPrice}" style="text-align : center;">\ [[${cartProductDto.productPrice}]]</span>
+									<input name="delete" type="button" value='x' style="width: 25px;"/>
+							  </div>		  
+						</div>
+					</div>
+				</div>
+				
+				<hr style="border: 3px solid #000000;">
+				
+				<div class="row">
+					<div class="col" style="text-align : right;">
+						<span>총 금액 : </span>
+					</div>
+					<div class="col-3">
+						<span id="resultPrice" th:value="${cartResultPrice}">$ [[${cartResultPrice}]]</span>
+					</div>
+				</div>
+				
+				<hr style="border: 3px solid #000000;">
+				
+				<div style="margin-left: 10px;">
+					<input type="radio" name="payment" value="현금"> 현금
+					<input type="radio" name="payment" value="카드"> 카드
+					
+					<div name="paymentZone" style="height: 50px;">
+						<div style="display: none"; name="paymentCash">
+							<input type="radio" name="cash" value="50000"> 50000원
+							<input type="radio" name="cash" value="10000"> 10000원
+							<input type="radio" name="cash" value="5000"> 5000원
+							<input type="radio" name="cash" value="1000"> 1000원
+							<div>
+								<input type="radio" name="cash" value="spotOnAmount"> 금액에 맞게
+								<input type="radio" name="cash" value="input">
+									<input type="text" name="directInput" style="width: 90px; height: 20px;" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="직접입력" disabled></input>
+								</input>
+							</div>
+						</div>
+						
+						<div style="display: none;" name="paymentCard">카드를 선택하셨습니다.</div>
+					</div>
+				</div>
+				
+				<hr style="border: 3px solid #000000;">
+				
+				<div class="row">
+					<div class="col" style="text-align : center;">
+						<button type="button" id="order" class="btn btn-primary" style="width: 150px;">주문</button>
+					</div>
+					<div class="col" style="text-align : center;">
+						<button type="button" class="btn btn-primary" id="modalBtn" data-bs-toggle="modal" data-bs-target="#userOrderHistoryModal" style="width: 150px;">주문 내역</button>
+					</div>
+				</div>
+			</div>
+			
+		<div class="modal fade" id="userOrderHistoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+		   	 <div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">주문 내역</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					
+					<div class="modal-body">
+						<table style="border-collapse: collapse; text-align: center; width: 100%;">
+							<thead>
+								<tr>
+									<th>주문 시간</th>
+									<th>상품 명</th>
+									<th>수량</th>
+									<th>가격</th>
+									<th>총 가격</th>
+									<th>결제 형태</th>
+									<th>결제 상태</th>
+								</tr>
+							</thead>
+							
+							<tbody>
+								<div th:each="histroyDto, status: ${histroyDtoList}">
+									<tr>
+										<td>[[${histroyDto.orderTime}]]</td>
+										
+										<td>
+											<div th:each="productName, status: ${histroyDto.productName}">
+												[[${productName}]]
+											</div>
+										</td>
+										
+										<td>
+											<div th:each="productCount, status: ${histroyDto.productCount}">
+												[[${productCount}]]
+											</div>
+										</td>
+										
+										<td>
+											<div th:each="productPrice, status: ${histroyDto.productPrice}">
+												[[${productPrice}]]
+											</div>
+										</td>
+										
+										<td>[[${histroyDto.totalAmount}]]</td>
+										<td>[[${histroyDto.paymentType}]]</td>
+										<td>[[${histroyDto.paymentStatus}]]</td>
+									</tr>
+								</div>
+							</tbody>
+						</table>
+					</div>
+		   	 </div>
+		  </div>
+		</div>
+		
+		<th:block layout:fragment="script">
+			<script src="/js/product/order.js"></script>
+		</th:block>
